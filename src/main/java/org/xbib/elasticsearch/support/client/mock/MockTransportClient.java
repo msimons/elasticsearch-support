@@ -2,6 +2,9 @@ package org.xbib.elasticsearch.support.client.mock;
 
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
@@ -51,9 +54,10 @@ public class MockTransportClient extends BulkTransportClient {
     }
 
     @Override
-    public MockTransportClient action(ActionRequest request) {
+    public MockTransportClient update(String index, String type, String id, String source) {
         return this;
     }
+
 
     @Override
     public MockTransportClient flushIngest() {

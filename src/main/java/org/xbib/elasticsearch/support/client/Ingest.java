@@ -38,6 +38,17 @@ public interface Ingest {
      */
     Ingest delete(String index, String type, String id);
 
+    /**
+     * Update document
+     *
+     * @param index  the index
+     * @param type   the type
+     * @param id     the id
+     * @param source the source
+     * @return this
+     */
+    Ingest update(String index, String type, String id, String source);
+
     Ingest newClient(Client client) throws IOException;
 
     Ingest newClient(Settings settings) throws IOException;
@@ -173,6 +184,7 @@ public interface Ingest {
      * @return this ingest
      */
     Ingest action(ActionRequest actionRequest);
+
 
     /**
      * Flush ingest, move all pending documents to the bulk indexer
