@@ -1,7 +1,6 @@
 package org.xbib.elasticsearch.support.client.transport;
 
 import org.elasticsearch.ElasticsearchIllegalStateException;
-import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -19,11 +18,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.ByteSizeUnit;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
-import org.xbib.elasticsearch.support.client.BaseIngestTransportClient;
-import org.xbib.elasticsearch.support.client.ClientHelper;
-import org.xbib.elasticsearch.support.client.Ingest;
-import org.xbib.elasticsearch.support.client.Metric;
-import org.xbib.elasticsearch.support.client.BulkProcessorHelper;
+import org.xbib.elasticsearch.support.client.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -265,6 +260,23 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
         return this;
     }
 
+    @Override
+    public BulkTransportClient bulkIndex(IndexRequest indexRequest) {
+        if (closed) {
+            throw new ElasticsearchIllegalStateException("client is closed");
+        }
+        try {
+            metric.getCurrentIngest().inc();
+            bulkProcessor.add(indexRequest);
+        } catch (Exception e) {
+            throwable = e;
+            closed = true;
+            logger.error("bulk add of index request failed: " + e.getMessage(), e);
+        } finally {
+            metric.getCurrentIngest().dec();
+        }
+        return this;
+    }
 
 
     @Override
@@ -286,22 +298,23 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
     }
 
     @Override
-    public BulkTransportClient action(ActionRequest request) {
+    public BulkTransportClient bulkDelete(DeleteRequest deleteRequest) {
         if (closed) {
             throw new ElasticsearchIllegalStateException("client is closed");
         }
         try {
             metric.getCurrentIngest().inc();
-            bulkProcessor.add(request);
+            bulkProcessor.add(deleteRequest);
         } catch (Exception e) {
             throwable = e;
             closed = true;
-            logger.error("bulk action request failed: " + e.getMessage(), e);
+            logger.error("bulk add of delete request failed: " + e.getMessage(), e);
         } finally {
             metric.getCurrentIngest().dec();
         }
         return this;
     }
+
 
     @Override
     public BulkTransportClient update(String index, String type, String id, String source) {
@@ -311,6 +324,24 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
         try {
             metric.getCurrentIngest().inc();
             bulkProcessor.add(new UpdateRequest().index(index).type(type).id(id).upsert(source));
+        } catch (Exception e) {
+            throwable = e;
+            closed = true;
+            logger.error("bulk add of update request failed: " + e.getMessage(), e);
+        } finally {
+            metric.getCurrentIngest().dec();
+        }
+        return this;
+    }
+
+    @Override
+    public BulkTransportClient bulkUpdate(UpdateRequest updateRequest) {
+        if (closed) {
+            throw new ElasticsearchIllegalStateException("client is closed");
+        }
+        try {
+            metric.getCurrentIngest().inc();
+            bulkProcessor.add(updateRequest);
         } catch (Exception e) {
             throwable = e;
             closed = true;
