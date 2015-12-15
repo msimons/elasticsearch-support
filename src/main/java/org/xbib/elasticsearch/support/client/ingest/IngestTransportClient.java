@@ -18,10 +18,7 @@ import org.xbib.elasticsearch.action.ingest.IngestActionFailure;
 import org.xbib.elasticsearch.action.ingest.IngestProcessor;
 import org.xbib.elasticsearch.action.ingest.IngestRequest;
 import org.xbib.elasticsearch.action.ingest.IngestResponse;
-import org.xbib.elasticsearch.support.client.BaseIngestTransportClient;
-import org.xbib.elasticsearch.support.client.ClientHelper;
-import org.xbib.elasticsearch.support.client.Ingest;
-import org.xbib.elasticsearch.support.client.Metric;
+import org.xbib.elasticsearch.support.client.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -48,6 +45,12 @@ public class IngestTransportClient extends BaseIngestTransportClient implements 
     private Throwable throwable;
 
     private volatile boolean closed = false;
+
+    @Override
+    public AcknowledgeInfo acknowledge() {
+        return null;
+    }
+
 
     @Override
     public IngestTransportClient maxActionsPerBulkRequest(int maxBulkActions) {
@@ -270,7 +273,7 @@ public class IngestTransportClient extends BaseIngestTransportClient implements 
     }
 
     @Override
-    public IngestTransportClient bulkIndex(org.elasticsearch.action.index.IndexRequest indexRequest) {
+    public IngestTransportClient bulkIndex(Long jobId, org.elasticsearch.action.index.IndexRequest indexRequest) {
         if (closed) {
             if (throwable != null) {
                 throw new ElasticsearchIllegalStateException("client is closed, possible reason: ", throwable);
@@ -316,7 +319,7 @@ public class IngestTransportClient extends BaseIngestTransportClient implements 
     }
 
     @Override
-    public IngestTransportClient bulkDelete(org.elasticsearch.action.delete.DeleteRequest deleteRequest) {
+    public IngestTransportClient bulkDelete(Long jobId, org.elasticsearch.action.delete.DeleteRequest deleteRequest) {
         if (closed) {
             if (throwable != null) {
                 throw new ElasticsearchIllegalStateException("client is closed, possible reason: ", throwable);
@@ -345,7 +348,7 @@ public class IngestTransportClient extends BaseIngestTransportClient implements 
     }
 
     @Override
-    public Ingest bulkUpdate(UpdateRequest updateRequest) {
+    public Ingest bulkUpdate(Long jobId, UpdateRequest updateRequest) {
         // we will never support this!
         throw new UnsupportedOperationException();
     }

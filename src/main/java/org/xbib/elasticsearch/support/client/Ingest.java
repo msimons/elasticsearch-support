@@ -30,6 +30,13 @@ public interface Ingest {
      */
     Ingest index(String index, String type, String id, String source);
 
+
+    /**
+     * Acknowledge info
+     * @return Acknowledgeinfo
+     */
+    AcknowledgeInfo acknowledge();
+
     /**
      * Delete document
      *
@@ -182,26 +189,29 @@ public interface Ingest {
     /**
      * Bulked index request. Each request will be added to a queue for bulking requests.
      * Submitting request will be done when bulk limits are exceeded.
+     * @param jobId Id for external correlation
      * @param indexRequest the index request to add
      * @return this ingest
      */
-    Ingest bulkIndex(IndexRequest indexRequest);
+    Ingest bulkIndex(Long jobId, IndexRequest indexRequest);
 
     /**
      * Bulked delete request. Each request will be added to a queue for bulking requests.
      * Submitting request will be done when bulk limits are exceeded.
+     * @param jobId Id for external correlation
      * @param deleteRequest the delete request to add
      * @return this ingest
      */
-    Ingest bulkDelete(DeleteRequest deleteRequest);
+    Ingest bulkDelete(Long jobId, DeleteRequest deleteRequest);
 
     /**
      * Bulked update request. Each request will be added to a queue for bulking requests.
      * Submitting request will be done when bulk limits are exceeded.
+     * @param jobId Id for external correlation
      * @param updateRequest the update request to add
      * @return this ingest
      */
-    Ingest bulkUpdate(UpdateRequest updateRequest);
+    Ingest bulkUpdate(Long jobId, UpdateRequest updateRequest);
 
 
 

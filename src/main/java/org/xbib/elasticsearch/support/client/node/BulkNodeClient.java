@@ -67,6 +67,11 @@ public class BulkNodeClient implements Ingest {
     }*/
 
     @Override
+    public AcknowledgeInfo acknowledge() {
+        return null;
+    }
+
+    @Override
     public BulkNodeClient maxActionsPerBulkRequest(int maxActionsPerBulkRequest) {
         this.maxActionsPerBulkRequest = maxActionsPerBulkRequest;
         return this;
@@ -237,7 +242,7 @@ public class BulkNodeClient implements Ingest {
     }
 
     @Override
-    public BulkNodeClient bulkIndex(IndexRequest indexRequest) {
+    public BulkNodeClient bulkIndex(Long jobId, IndexRequest indexRequest) {
         if (closed) {
             throw new ElasticsearchIllegalStateException("client is closed");
         }
@@ -284,7 +289,7 @@ public class BulkNodeClient implements Ingest {
 
 
     @Override
-    public BulkNodeClient bulkDelete(DeleteRequest deleteRequest) {
+    public BulkNodeClient bulkDelete(Long jobId, DeleteRequest deleteRequest) {
         if (closed) {
             throw new ElasticsearchIllegalStateException("client is closed");
         }
@@ -325,7 +330,7 @@ public class BulkNodeClient implements Ingest {
     }
 
     @Override
-    public BulkNodeClient bulkUpdate(UpdateRequest updateRequest) {
+    public BulkNodeClient bulkUpdate(Long jobId, UpdateRequest updateRequest) {
         if (closed) {
             throw new ElasticsearchIllegalStateException("client is closed");
         }

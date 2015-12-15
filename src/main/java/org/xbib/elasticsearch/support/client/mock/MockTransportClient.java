@@ -7,6 +7,7 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
+import org.xbib.elasticsearch.support.client.AcknowledgeInfo;
 import org.xbib.elasticsearch.support.client.transport.BulkTransportClient;
 
 import java.io.IOException;
@@ -17,6 +18,11 @@ import java.util.Map;
  * Useful for testing or dry runs.
  */
 public class MockTransportClient extends BulkTransportClient {
+
+    @Override
+    public AcknowledgeInfo acknowledge() {
+        return null;
+    }
 
     @Override
     public MockTransportClient newClient(Map<String,String> settings) {
@@ -58,17 +64,17 @@ public class MockTransportClient extends BulkTransportClient {
     }
 
     @Override
-    public BulkTransportClient bulkDelete(DeleteRequest deleteRequest) {
+    public BulkTransportClient bulkDelete(Long jobId, DeleteRequest deleteRequest) {
         return this;
     }
 
     @Override
-    public BulkTransportClient bulkIndex(IndexRequest indexRequest) {
+    public BulkTransportClient bulkIndex(Long jobId, IndexRequest indexRequest) {
         return this;
     }
 
     @Override
-    public BulkTransportClient bulkUpdate(UpdateRequest updateRequest) {
+    public BulkTransportClient bulkUpdate(Long jobId, UpdateRequest updateRequest) {
         return this;
     }
 
