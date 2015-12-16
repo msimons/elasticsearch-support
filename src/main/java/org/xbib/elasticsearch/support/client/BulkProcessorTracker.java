@@ -9,7 +9,7 @@ import java.util.*;
 
 public class BulkProcessorTracker {
     private BulkProcessor bulkProcessor;
-    private Map<DocumentIdentity,Queue<Job>> jobs = new HashMap<>();
+    private Map<DocumentIdentity,AckJobs> jobs = new HashMap<>();
 
     public BulkProcessorTracker(BulkProcessor bulkProcessor) {
         this.bulkProcessor = bulkProcessor;
@@ -36,21 +36,23 @@ public class BulkProcessorTracker {
 
     private void trackJob(Long jobId, DocumentIdentity identity) {
 
-        // do not track when jobid is null
-        if(jobId == null) {
-            return;
-        }
+        try {
 
-        if(!jobs.containsKey(identity)) {
-            Queue<Job> queue = new LinkedList<>();
-            queue.add(new Job(jobId,0));
-            jobs.put(identity, queue);
-            return;
-        }
+            // do not track when jobid is null
+            if (jobId == null) {
+                return;
+            }
 
-        Queue<Job> queue = jobs.get(identity);
-        Job last = queue.peek();
-        queue.add(new Job(jobId,last.getOrder() + 1));
+            if (!jobs.containsKey(identity)) {
+                jobs.put(identity,new AckJobs());
+            }
+
+            AckJobs ackJobs = jobs.get(identity);
+            ackJobs.getJobs().add(new Job(jobId, 0));
+
+        } catch (Exception e) {
+            System.out.println("");
+        }
     }
 
     public void succeeded(DocumentIdentity identity) {
@@ -62,33 +64,27 @@ public class BulkProcessorTracker {
     }
 
     private void finish(DocumentIdentity identity,boolean succeeded) {
-        if(!jobs.containsKey(identity)){
-            return;
+        try {
+            if (!jobs.containsKey(identity)) {
+                return;
+            }
+
+            AckJobs ackJobs = jobs.get(identity);
+            if(!succeeded) {
+                ackJobs.jobFailed();
+            }
+        } catch(Exception e) {
+         System.out.println("");
         }
-
-        Queue<Job> queue = jobs.get(identity);
-        Job job = queue.peek();
-
-        if(job == null) {
-            return;
-        }
-
-        job.setSucceeded(succeeded);
     }
 
     public AcknowledgeInfo finish() {
         List<AcknowledgeItem> items = new ArrayList<>();
         for(DocumentIdentity i : jobs.keySet()) {
-            boolean allSucceeded = true;
-            for(Job a : jobs.get(i)) {
-                if(!a.isSucceeded()) {
-                    allSucceeded = false;
-                    break;
-                }
-            }
-            for(Job a : jobs.get(i)) {
-                AcknowledgeItem item = new AcknowledgeItem(i,a);
-                item.getJobIdentity().setSucceeded(allSucceeded);
+            AckJobs ackJobs = jobs.get(i);
+            for(Job j : ackJobs.getJobs()) {
+                AcknowledgeItem item = new AcknowledgeItem(i,j);
+                item.getJobIdentity().setSucceeded(ackJobs.isSucceeded());
                 items.add(item);
             }
         }
@@ -98,6 +94,27 @@ public class BulkProcessorTracker {
        jobs.clear();
 
        return acknowledgeInfo;
+    }
+
+    private class AckJobs {
+        private List<Job> jobs= new ArrayList<>();
+        private boolean succeeded = true;
+
+        public void jobFailed() {
+            succeeded = false;
+        }
+
+        public List<Job> getJobs() {
+            return jobs;
+        }
+
+        public void setJobs(List<Job> jobs) {
+            this.jobs = jobs;
+        }
+
+        public boolean isSucceeded() {
+            return succeeded;
+        }
     }
 
 

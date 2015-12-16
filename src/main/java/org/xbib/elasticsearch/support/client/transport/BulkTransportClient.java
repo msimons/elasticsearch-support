@@ -47,8 +47,8 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
     private boolean closed = false;
 
     @Override
-    public AcknowledgeInfo acknowledge() {
-        flushIngest();
+    public synchronized AcknowledgeInfo acknowledge() throws InterruptedException {
+        waitForResponses(TimeValue.timeValueSeconds(60));
         return bulkProcessor.finish();
     }
 
@@ -124,9 +124,9 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
                         metric.getSucceeded().dec(1);
                         metric.getFailed().inc(1);
 
-                        bulkProcessor.failed(new DocumentIdentity(itemResponse.getIndex(),itemResponse.getType(),itemResponse.getId()));
+                        bulkProcessor.failed(new DocumentIdentity(itemResponse.getType(),itemResponse.getId()));
                     } else {
-                        bulkProcessor.succeeded(new DocumentIdentity(itemResponse.getIndex(),itemResponse.getType(),itemResponse.getId()));
+                        bulkProcessor.succeeded(new DocumentIdentity(itemResponse.getType(),itemResponse.getId()));
                     }
 
                 }

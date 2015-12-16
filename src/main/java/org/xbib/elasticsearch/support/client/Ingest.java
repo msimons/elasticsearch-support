@@ -35,7 +35,7 @@ public interface Ingest {
      * Acknowledge info
      * @return Acknowledgeinfo
      */
-    AcknowledgeInfo acknowledge();
+    AcknowledgeInfo acknowledge() throws InterruptedException;
 
     /**
      * Delete document
