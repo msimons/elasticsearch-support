@@ -36,23 +36,17 @@ public class BulkProcessorTracker {
 
     private void trackJob(Long jobId, DocumentIdentity identity) {
 
-        try {
-
-            // do not track when jobid is null
-            if (jobId == null) {
-                return;
-            }
-
-            if (!jobs.containsKey(identity)) {
-                jobs.put(identity,new AckJobs());
-            }
-
-            AckJobs ackJobs = jobs.get(identity);
-            ackJobs.getJobs().add(new Job(jobId, 0));
-
-        } catch (Exception e) {
-            System.out.println("");
+        // do not track when jobid is null
+        if (jobId == null) {
+            return;
         }
+
+        if (!jobs.containsKey(identity)) {
+            jobs.put(identity,new AckJobs());
+        }
+
+        AckJobs ackJobs = jobs.get(identity);
+        ackJobs.getJobs().add(new Job(jobId, 0));
     }
 
     public void succeeded(DocumentIdentity identity) {
@@ -64,17 +58,13 @@ public class BulkProcessorTracker {
     }
 
     private void finish(DocumentIdentity identity,boolean succeeded) {
-        try {
-            if (!jobs.containsKey(identity)) {
-                return;
-            }
+        if (!jobs.containsKey(identity)) {
+            return;
+        }
 
-            AckJobs ackJobs = jobs.get(identity);
-            if(!succeeded) {
-                ackJobs.jobFailed();
-            }
-        } catch(Exception e) {
-         System.out.println("");
+        AckJobs ackJobs = jobs.get(identity);
+        if(!succeeded) {
+            ackJobs.jobFailed();
         }
     }
 
