@@ -189,29 +189,29 @@ public interface Ingest {
     /**
      * Bulked index request. Each request will be added to a queue for bulking requests.
      * Submitting request will be done when bulk limits are exceeded.
-     * @param jobId Id for external correlation
      * @param indexRequest the index request to add
+     * @param jobId Id for external correlation
      * @return this ingest
      */
-    Ingest bulkIndex(Long jobId, IndexRequest indexRequest);
+    Ingest bulkIndex(IndexRequest indexRequest,Long... jobId);
 
     /**
      * Bulked delete request. Each request will be added to a queue for bulking requests.
      * Submitting request will be done when bulk limits are exceeded.
-     * @param jobId Id for external correlation
      * @param deleteRequest the delete request to add
+     * @param jobId Id for external correlation
      * @return this ingest
      */
-    Ingest bulkDelete(Long jobId, DeleteRequest deleteRequest);
+    Ingest bulkDelete(DeleteRequest deleteRequest,Long... jobId);
 
     /**
      * Bulked update request. Each request will be added to a queue for bulking requests.
      * Submitting request will be done when bulk limits are exceeded.
-     * @param jobId Id for external correlation
      * @param updateRequest the update request to add
+     * @param jobId Id for external correlation
      * @return this ingest
      */
-    Ingest bulkUpdate(Long jobId, UpdateRequest updateRequest);
+    Ingest bulkUpdate(UpdateRequest updateRequest,Long... jobId);
 
 
 

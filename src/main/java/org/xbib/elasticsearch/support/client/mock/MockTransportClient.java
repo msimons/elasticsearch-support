@@ -64,17 +64,17 @@ public class MockTransportClient extends BulkTransportClient {
     }
 
     @Override
-    public BulkTransportClient bulkDelete(Long jobId, DeleteRequest deleteRequest) {
+    public BulkTransportClient bulkDelete(DeleteRequest deleteRequest, Long... jobId) {
         return this;
     }
 
     @Override
-    public BulkTransportClient bulkIndex(Long jobId, IndexRequest indexRequest) {
+    public BulkTransportClient bulkIndex(IndexRequest indexRequest, Long... jobId) {
         return this;
     }
 
     @Override
-    public BulkTransportClient bulkUpdate(Long jobId, UpdateRequest updateRequest) {
+    public BulkTransportClient bulkUpdate(UpdateRequest updateRequest, Long... jobId) {
         return this;
     }
 

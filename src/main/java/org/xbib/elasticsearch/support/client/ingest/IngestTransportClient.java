@@ -273,7 +273,7 @@ public class IngestTransportClient extends BaseIngestTransportClient implements 
     }
 
     @Override
-    public IngestTransportClient bulkIndex(Long jobId, org.elasticsearch.action.index.IndexRequest indexRequest) {
+    public IngestTransportClient bulkIndex(org.elasticsearch.action.index.IndexRequest indexRequest, Long... jobId) {
         if (closed) {
             if (throwable != null) {
                 throw new ElasticsearchIllegalStateException("client is closed, possible reason: ", throwable);
@@ -319,7 +319,7 @@ public class IngestTransportClient extends BaseIngestTransportClient implements 
     }
 
     @Override
-    public IngestTransportClient bulkDelete(Long jobId, org.elasticsearch.action.delete.DeleteRequest deleteRequest) {
+    public IngestTransportClient bulkDelete(org.elasticsearch.action.delete.DeleteRequest deleteRequest, Long... jobId) {
         if (closed) {
             if (throwable != null) {
                 throw new ElasticsearchIllegalStateException("client is closed, possible reason: ", throwable);
@@ -348,7 +348,7 @@ public class IngestTransportClient extends BaseIngestTransportClient implements 
     }
 
     @Override
-    public Ingest bulkUpdate(Long jobId, UpdateRequest updateRequest) {
+    public Ingest bulkUpdate(UpdateRequest updateRequest, Long... jobId) {
         // we will never support this!
         throw new UnsupportedOperationException();
     }

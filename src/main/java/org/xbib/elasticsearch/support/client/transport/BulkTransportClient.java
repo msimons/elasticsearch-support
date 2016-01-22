@@ -258,17 +258,17 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
 
     @Override
     public BulkTransportClient index(String index, String type, String id, String source) {
-        return bulkIndex(null,new IndexRequest(index).type(type).id(id).create(false).source(source));
+        return bulkIndex(new IndexRequest(index).type(type).id(id).create(false).source(source));
     }
 
     @Override
-    public BulkTransportClient bulkIndex(Long jobId, IndexRequest indexRequest) {
+    public BulkTransportClient bulkIndex(IndexRequest indexRequest,Long... jobId) {
         if (closed) {
             throw new ElasticsearchIllegalStateException("client is closed");
         }
         try {
             metric.getCurrentIngest().inc();
-            bulkProcessor.add(jobId, indexRequest);
+            bulkProcessor.add(indexRequest,jobId);
         } catch (Exception e) {
             throwable = e;
             closed = true;
@@ -282,17 +282,17 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
 
     @Override
     public BulkTransportClient delete(String index, String type, String id) {
-        return bulkDelete(null,new DeleteRequest(index).type(type).id(id));
+        return bulkDelete(new DeleteRequest(index).type(type).id(id));
     }
 
     @Override
-    public BulkTransportClient bulkDelete(Long jobId, DeleteRequest deleteRequest) {
+    public BulkTransportClient bulkDelete(DeleteRequest deleteRequest,Long... jobId) {
         if (closed) {
             throw new ElasticsearchIllegalStateException("client is closed");
         }
         try {
             metric.getCurrentIngest().inc();
-            bulkProcessor.add(jobId,deleteRequest);
+            bulkProcessor.add(deleteRequest,jobId);
         } catch (Exception e) {
             throwable = e;
             closed = true;
@@ -306,17 +306,17 @@ public class BulkTransportClient extends BaseIngestTransportClient implements In
 
     @Override
     public BulkTransportClient update(String index, String type, String id, String source) {
-        return bulkUpdate(null,new UpdateRequest().index(index).type(type).id(id).upsert(source));
+        return bulkUpdate(new UpdateRequest().index(index).type(type).id(id).upsert(source));
     }
 
     @Override
-    public BulkTransportClient bulkUpdate(Long jobId, UpdateRequest updateRequest) {
+    public BulkTransportClient bulkUpdate(UpdateRequest updateRequest,Long... jobId) {
         if (closed) {
             throw new ElasticsearchIllegalStateException("client is closed");
         }
         try {
             metric.getCurrentIngest().inc();
-            bulkProcessor.add(jobId,updateRequest);
+            bulkProcessor.add(updateRequest,jobId);
         } catch (Exception e) {
             throwable = e;
             closed = true;

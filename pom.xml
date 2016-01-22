@@ -7,7 +7,7 @@
 
     <groupId>org.xbib.elasticsearch.plugin</groupId>
     <artifactId>elasticsearch-support</artifactId>
-    <version>1.7.3.2-msimons</version>
+    <version>1.7.3.2-msimons1</version>
     <packaging>jar</packaging>
 
     <name>elasticsearch-support</name>

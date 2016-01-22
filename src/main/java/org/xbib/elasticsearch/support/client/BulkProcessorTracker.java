@@ -5,7 +5,10 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BulkProcessorTracker {
     private BulkProcessor bulkProcessor;
@@ -19,25 +22,25 @@ public class BulkProcessorTracker {
         return bulkProcessor;
     }
 
-    public BulkProcessor add(Long jobId, IndexRequest request) {
-        trackJob(jobId, new DocumentIdentity(request));
+    public BulkProcessor add(IndexRequest request,Long... jobId) {
+        trackJob(new DocumentIdentity(request),jobId);
         return bulkProcessor.add(request, null);
     }
 
-    public BulkProcessor add(Long jobId, UpdateRequest request) {
-        trackJob(jobId, new DocumentIdentity(request));
+    public BulkProcessor add(UpdateRequest request,Long... jobId) {
+        trackJob(new DocumentIdentity(request),jobId);
         return bulkProcessor.add(request, null);
     }
 
-    public BulkProcessor add(Long jobId, DeleteRequest request) {
-        trackJob(jobId, new DocumentIdentity(request));
+    public BulkProcessor add(DeleteRequest request,Long... jobId) {
+        trackJob(new DocumentIdentity(request),jobId);
         return bulkProcessor.add(request, null);
     }
 
-    private void trackJob(Long jobId, DocumentIdentity identity) {
+    private void trackJob(DocumentIdentity identity,Long... jobId) {
 
-        // do not track when jobid is null
-        if (jobId == null) {
+        // do not track when jobid is null or length is zero
+        if (jobId == null || jobId.length == 0) {
             return;
         }
 
@@ -46,7 +49,10 @@ public class BulkProcessorTracker {
         }
 
         AckJobs ackJobs = jobs.get(identity);
-        ackJobs.getJobs().add(new Job(jobId, 0));
+
+        for(Long id : jobId) {
+            ackJobs.getJobs().add(new Job(id, 0));
+        }
     }
 
     public void succeeded(DocumentIdentity identity) {
