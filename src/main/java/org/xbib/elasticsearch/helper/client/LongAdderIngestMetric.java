@@ -47,6 +47,8 @@ public class LongAdderIngestMetric implements IngestMetric {
 
     private final Count failed = new CountMetric();
 
+    private final AcknowledgeMetric acknowledgeMetric = new AcknowledgeMetric();
+
     private Long started;
 
     private Long stopped;
@@ -143,4 +145,8 @@ public class LongAdderIngestMetric implements IngestMetric {
         return stopBulkRefreshIntervals;
     }
 
+    @Override
+    public AcknowledgeMetric getAcknowledgeMetric() {
+        return acknowledgeMetric;
+    }
 }

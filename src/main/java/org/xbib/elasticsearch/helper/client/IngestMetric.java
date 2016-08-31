@@ -55,4 +55,6 @@ public interface IngestMetric {
 
     Map<String, Long> getStopBulkRefreshIntervals();
 
+    AcknowledgeMetric getAcknowledgeMetric();
+
 }

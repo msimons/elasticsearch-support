@@ -1,5 +1,6 @@
 package org.xbib.elasticsearch.common.metrics;
 
+import org.xbib.elasticsearch.helper.client.AcknowledgeMetric;
 import org.xbib.elasticsearch.helper.client.IngestMetric;
 import org.xbib.metrics.Count;
 import org.xbib.metrics.Metered;
@@ -21,6 +22,7 @@ public class ElasticsearchIngestMetric implements IngestMetric {
     private final Count submitted = new ElasticsearchCounterMetric();
     private final Count succeeded = new ElasticsearchCounterMetric();
     private final Count failed = new ElasticsearchCounterMetric();
+    private final AcknowledgeMetric acknowledgeMetric = new AcknowledgeMetric();
     private Long started;
     private Long stopped;
 
@@ -116,4 +118,8 @@ public class ElasticsearchIngestMetric implements IngestMetric {
         return stopBulkRefreshIntervals;
     }
 
+    @Override
+    public AcknowledgeMetric getAcknowledgeMetric() {
+        return acknowledgeMetric;
+    }
 }

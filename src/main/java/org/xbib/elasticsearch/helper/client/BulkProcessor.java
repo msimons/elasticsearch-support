@@ -321,6 +321,7 @@ public class BulkProcessor implements Closeable {
         if (bulkRequest.numberOfActions() > 0) {
             execute();
         }
+
     }
 
     class Flush implements Runnable {

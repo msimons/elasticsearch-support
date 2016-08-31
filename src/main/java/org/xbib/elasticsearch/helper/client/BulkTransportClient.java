@@ -123,6 +123,9 @@ public class BulkTransportClient extends BaseMetricTransportClient implements Cl
                         n++;
                         metric.getSucceeded().dec(1);
                         metric.getFailed().inc(1);
+                        metric.getAcknowledgeMetric().addFailed(itemResponse);
+                    } else {
+                        metric.getAcknowledgeMetric().addSucceeded(itemResponse);
                     }
                 }
                 logger.debug("after bulk [{}] [succeeded={}] [failed={}] [{}ms] [concurrent requests={}]",
