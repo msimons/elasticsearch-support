@@ -47,7 +47,7 @@ public class LongAdderIngestMetric implements IngestMetric {
 
     private final Count failed = new CountMetric();
 
-    private final AcknowledgeMetric acknowledgeMetric = new AcknowledgeMetric();
+    private AcknowledgeMetric acknowledgeMetric;
 
     private Long started;
 
@@ -148,5 +148,10 @@ public class LongAdderIngestMetric implements IngestMetric {
     @Override
     public AcknowledgeMetric getAcknowledgeMetric() {
         return acknowledgeMetric;
+    }
+
+    @Override
+    public void setAcknowledgeMetric(AcknowledgeMetric acknowledgeMetric) {
+        this.acknowledgeMetric = acknowledgeMetric;
     }
 }

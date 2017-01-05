@@ -57,4 +57,5 @@ public interface IngestMetric {
 
     AcknowledgeMetric getAcknowledgeMetric();
 
+    void setAcknowledgeMetric(AcknowledgeMetric acknowledgeMetric);
 }

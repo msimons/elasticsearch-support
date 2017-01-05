@@ -22,7 +22,7 @@ public class ElasticsearchIngestMetric implements IngestMetric {
     private final Count submitted = new ElasticsearchCounterMetric();
     private final Count succeeded = new ElasticsearchCounterMetric();
     private final Count failed = new ElasticsearchCounterMetric();
-    private final AcknowledgeMetric acknowledgeMetric = new AcknowledgeMetric();
+    private AcknowledgeMetric acknowledgeMetric;
     private Long started;
     private Long stopped;
 
@@ -121,5 +121,10 @@ public class ElasticsearchIngestMetric implements IngestMetric {
     @Override
     public AcknowledgeMetric getAcknowledgeMetric() {
         return acknowledgeMetric;
+    }
+
+    @Override
+    public void setAcknowledgeMetric(AcknowledgeMetric acknowledgeMetric) {
+        this.acknowledgeMetric = acknowledgeMetric;
     }
 }
