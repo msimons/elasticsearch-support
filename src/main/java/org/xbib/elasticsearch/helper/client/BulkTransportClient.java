@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 public class BulkTransportClient extends BaseMetricTransportClient implements ClientAPI {
 
     private final static ESLogger logger = ESLoggerFactory.getLogger(BulkTransportClient.class.getName());
+    public static final String RELATED_JOB_ID = "related_job_id";
 
     private int maxActionsPerRequest = DEFAULT_MAX_ACTIONS_PER_REQUEST;
 
@@ -125,10 +126,12 @@ public class BulkTransportClient extends BaseMetricTransportClient implements Cl
                         metric.getFailed().inc(1);
 
                         if (metric.getAcknowledgeMetric() != null) {
-                            metric.getAcknowledgeMetric().addFailed(itemResponse);
+                            Long relatedJobId = request.requests().get(itemResponse.getItemId()).getHeader(RELATED_JOB_ID);
+                            metric.getAcknowledgeMetric().addFailed(relatedJobId);
                         }
                     } else if (metric.getAcknowledgeMetric() != null) {
-                        metric.getAcknowledgeMetric().addSucceeded(itemResponse);
+                        Long relatedJobId = request.requests().get(itemResponse.getItemId()).getHeader(RELATED_JOB_ID);
+                        metric.getAcknowledgeMetric().addSucceeded(relatedJobId);
                     }
                 }
                 logger.debug("after bulk [{}] [succeeded={}] [failed={}] [{}ms] [concurrent requests={}]",
@@ -296,7 +299,9 @@ public class BulkTransportClient extends BaseMetricTransportClient implements Cl
         }
         try {
             metric.getCurrentIngest().inc(index, type, id);
-            bulkProcessor.add(new UpdateRequest().index(index).type(type).id(id).upsert(source));
+            UpdateRequest updateRequest = new UpdateRequest().index(index).type(type).id(id).upsert(source);
+            updateRequest.putHeader(RELATED_JOB_ID, "1234");
+            bulkProcessor.add(updateRequest);
         } catch (Exception e) {
             throwable = e;
             closed = true;
